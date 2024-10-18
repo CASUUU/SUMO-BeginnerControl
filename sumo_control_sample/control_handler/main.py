@@ -21,7 +21,7 @@ multi_index_0 = 18 * 3                          # Main road traffic    unit: 100
 multi_index_1 = 12                               # Ramp traffic         unit: 100 vehicles
 initial_speed_0 = 110 / 3.6                     # Initial speed on main road, 110 km/h
 initial_speed_1 = 80 / 3.6                      # Initial speed on ramp, 80 km/h
-MPR = 60                                        # CAV渗透率
+MPR = 60                                        # MPR of CAV
 
 base_setting_para = [multi_index_0, multi_index_1, MPR]
 speed_setting = [round(initial_speed_0, 2), round(initial_speed_1, 2)]
