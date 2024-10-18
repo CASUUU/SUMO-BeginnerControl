@@ -18,11 +18,12 @@ from control_helper.run_for_main import *
 
 
 multi_index_0 = 18 * 3                          # Main road traffic    unit: 100 vehicles
-multi_index_1 = 5                               # Ramp traffic         unit: 100 vehicles
+multi_index_1 = 12                               # Ramp traffic         unit: 100 vehicles
 initial_speed_0 = 110 / 3.6                     # Initial speed on main road, 110 km/h
 initial_speed_1 = 80 / 3.6                      # Initial speed on ramp, 80 km/h
+MPR = 60                                        # CAV渗透率
 
-base_setting_para = [multi_index_0, multi_index_1]
+base_setting_para = [multi_index_0, multi_index_1, MPR]
 speed_setting = [round(initial_speed_0, 2), round(initial_speed_1, 2)]
 
 
@@ -43,11 +44,11 @@ if __name__ == "__main__":
         sumoBinary = checkBinary('sumo-gui')
     sumoBinary = checkBinary('sumo-gui')
 
-    generate_routefile(multi_index_0, multi_index_1)                     # Generate traffic
+    generate_routefile(multi_index_0, multi_index_1, MPR)                     # Generate traffic
     generate_roadnet_file_func(speed_setting)
 
     traci.start([sumoBinary, "-c", "../../deployment/environment/main_config.sumocfg"])
     traci.setLegacyGetLeader(True)
 
     #################################################
-    run()                                    # Execute function
+    run(base_setting_para)                                    # Execute function

@@ -3,9 +3,10 @@ import sys
 from .control import *
 from .data_coll import *
 
-interrupt_timestamp = 500
 
-def run():  # Function to execute the defined operations
+interrupt_timestamp = 300
+
+def run(base_setting_para):  # Function to execute the defined operations
     step = 0
     while traci.simulation.getMinExpectedNumber() > 0:
         traci.simulationStep()
@@ -17,6 +18,13 @@ def run():  # Function to execute the defined operations
             control_func(vehicle_id)
             if time_stamp % 1 == 0:
                 data_coll_vi_ti(vehicle_id, time_stamp)
+        if time_stamp % 1 == 0:
+            data_coll_ti(vehicle_ids)
+        # Periodic summary of data
+        ### - Accompanied by data output and saving -
+        if time_stamp == interrupt_timestamp:
+            data_coll_t_check(base_setting_para, interrupt_timestamp, time_stamp)
+        
         
         step += 0.1
     traci.close()

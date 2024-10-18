@@ -79,24 +79,39 @@ def generate_roadnet_file_func(speed_setting):
 """, file=road_net_file)
         
 # traffic file generation
-def generate_routefile(multi_index_0, multi_index_1):
+def generate_routefile(multi_index_0, multi_index_1, MPR):
     # random.seed(42)
-    total_vehicles_0 = 100 * multi_index_0          # Main road traffic (actual)
-    total_vehicles_1 = 100 * multi_index_1          # Ramp traffic (actual)
+    total_vehicles_0 = 100 * multi_index_0          # Actual traffic flow on the main road
+    total_vehicles_1 = 100 * multi_index_1          # Actual traffic flow on the ramp
+    v_CAV_p = MPR / 100                             # Proportion of CAVs
+    v_HDV_p = 1 - MPR / 100                         # Proportion of HDVs
+    # Generate the number of two types of vehicles
+    num_HDV_0 = int(total_vehicles_0 * v_HDV_p)     # Number of HDVs on the main road
+    num_CAV_0 = int(total_vehicles_0 * v_CAV_p)     # Number of CAVs on the main road
+    num_HDV_1 = int(total_vehicles_1 * v_HDV_p)     # Number of HDVs on the ramp
+    num_CAV_1 = int(total_vehicles_1 * v_CAV_p)     # Number of CAVs on the ramp
+
+    # HDV: green
+    # CAV: red
+
     with open("../../deployment/environment/route.rou.xml", "w") as routes:
         print("""<routes>
-        <vType id="HDV_0" length="5.00" accel="2" decel="3" emergencyDecel="3" mingap="2" tau="2" color="127,255,0" carFollowModel="IDM"/>
-        <vType id="HDV_1" length="5.00" accel="3" decel="3" emergencyDecel="3" mingap="2" tau="2" color="127,255,0" carFollowModel="IDM"/>
+        <vType id="HDV_ori" length="5.00" accel="1.5" decel="3.5" emergencyDecel="3.5" mingap="3.5" tau="2.0" color="127,255,0" carFollowModel="IDM"/>
+        <vType id="CAV_ori" length="5.00" accel="2.6" decel="4.5" emergencyDecel="4.5" mingap="2.0" tau="1.1" color="255,0,0" carFollowModel="CACC"/>
 
         <route id="r_1" edges="1 3 4"/>
         <route id="r_2" edges="2 3 4"/>""", file=routes)
         
         # Generate vehicles for the main road
-        print('<flow id="flow_HDV_0" begin="0" end="3600" vehsPerHour="%i" departSpeed="max" type="HDV_0" route="r_1" departLane="random" lcKeepRight="0">' % (total_vehicles_0), file=routes)
+        print('<flow id="flow_HDV_0" begin="0" end="3600" vehsPerHour="%i" departSpeed="max" type="HDV_ori" route="r_1" departLane="random" lcKeepRight="0">' % (num_HDV_0), file=routes)
+        print('</flow>', file=routes)
+        print('<flow id="flow_CAV_0" begin="0" end="3600" vehsPerHour="%i" departSpeed="max" type="CAV_ori" route="r_1" departLane="random" lcKeepRight="0">' % (num_CAV_0), file=routes)
         print('</flow>', file=routes)
     
         # Generate vehicles for the ramp
-        print('<flow id="flow_HDV_1" begin="0" end="3600" vehsPerHour="%i" departSpeed="max" type="HDV_1" route="r_2" departLane="random" lcKeepRight="0">' % (total_vehicles_1), file=routes)
+        print('<flow id="flow_HDV_1" begin="0" end="3600" vehsPerHour="%i" departSpeed="max" type="HDV_ori" route="r_2" departLane="random" lcKeepRight="0">' % (num_HDV_1), file=routes)
+        print('</flow>', file=routes)
+        print('<flow id="flow_CAV_1" begin="0" end="3600" vehsPerHour="%i" departSpeed="max" type="CAV_ori" route="r_2" departLane="random" lcKeepRight="0">' % (num_CAV_1), file=routes)
         print('</flow>', file=routes)
 
         print("</routes>", file=routes)
