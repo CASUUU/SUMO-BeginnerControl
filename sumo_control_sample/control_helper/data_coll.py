@@ -40,7 +40,11 @@ def data_coll_ti(vehicle_ids):
 
 def data_coll_t_check(base_setting_para, interrupt_timesatmp, time_stamp):
     F_NAME = base_setting_para
-    file_name_base = f"mpr_{F_NAME[2]}_flow_{F_NAME[0]}_{F_NAME[1]}_time_{interrupt_timesatmp}"
+    if base_setting_para[3]:
+        tag = 'without_ramp'
+    else:
+        tag = 'ramp'
+    file_name_base = f"mpr_{F_NAME[2]}_flow_{F_NAME[0]}_{F_NAME[1]}_time_{interrupt_timesatmp}_{tag}"
 
     base_info_left_df = pd.DataFrame(base_info_left, columns=['left_lane', 'vehicle_id_left', 'vehicle_type_left', 'speed_left', 'acc_left', 'pos_left', 'time_stamp_left'])
     base_info_middle_df = pd.DataFrame(base_info_middle, columns=['middle_lane', 'vehicle_id_middle', 'vehicle_type_middle', 'speed_middle', 'acc_middle', 'pos_middle', 'time_stamp_middle'])
